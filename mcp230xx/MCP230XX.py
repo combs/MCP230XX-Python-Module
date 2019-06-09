@@ -37,25 +37,25 @@ class MCP230XX:
             self.bank = '8bit'
         else:
             self.bank = regScheme
-            
+
         self.callBackFuncts=[]
         for i in range(0,17):
             self.callBackFuncts.append(['empty','emtpy'])
 
-        return            
+        return
 
     def single_access_read(self, reg=0x00):
         """single_access_read, function to read a single data register
-        of the MCP230xx gpio expander"""                  
-       
+        of the MCP230xx gpio expander"""
+
         dataTransfer=self.bus.read_byte_data(self.i2cAddress,reg)
-        
+
         return dataTransfer
 
     def single_access_write(self, reg=0x00, regValue=0x0):
         """single_access_write, function to write to a single data register
         of the MCP230xx gpio expander"""
-        
+
         self.bus.write_byte_data(self.i2cAddress, reg, regValue)
 
         return
@@ -67,8 +67,8 @@ class MCP230XX:
 
         # need to add way of throwing an error if pin is outside
         # of 0-15 range
-        
-        if pin >= 0 and pin < 8:            
+
+        if pin >= 0 and pin < 8:
             bit = pin
             if self.bank == '16bit':
                 reg = reg16A
@@ -79,7 +79,7 @@ class MCP230XX:
             if self.bank == '16bit':
                 reg = reg16B
             else: # self.bank = '8bit'
-                reg = reg8B        
+                reg = reg8B
 
         return reg, bit
 
@@ -110,14 +110,14 @@ class MCP230XX:
         regValue = self.single_access_read(reg)
         regValue = regValue & 0b10111001
         regValue = regValue | (mirrorBit<<6) + (odrBit<<2) + (intpolBit<<1)
-        self.single_access_write(reg, regValue)        
+        self.single_access_write(reg, regValue)
 
         return
 
     def set_register_addressing(self, regScheme='8bit'):
         """set_register_addressing, function to change how the registers
         are mapped.  For an MCP23008, bank should always equal '8bit'.  This
-        sets bit 7 of the IOCON register"""        
+        sets bit 7 of the IOCON register"""
 
         if self.bank == '16bit':
             reg = 0x0A
@@ -134,7 +134,7 @@ class MCP230XX:
         regValue = self.single_access_read(reg)
         regValue = regValue & 0b01111111
         regValue = regValue | (bankBit<<7)
-        self.single_access_write(reg, regValue)        
+        self.single_access_write(reg, regValue)
 
         return
 
@@ -148,18 +148,18 @@ class MCP230XX:
 
         reg, bit = self.register_bit_select(pin ,reg8A=0x00,reg16A=0x00,
                                             reg8B=0x10, reg16B=0x01)
-                
+
         regValue = self.single_access_read(reg)
-        
+
         if mode == 'output':
-            mask = 0b11111111 & ~(1<<bit)            
-            regValue = regValue & mask                
-            self.single_access_write(reg, regValue)           
+            mask = 0b11111111 & ~(1<<bit)
+            regValue = regValue & mask
+            self.single_access_write(reg, regValue)
 
         else: # mode = input
-            mask = 0x00 | (1<<bit)           
-            regValue = regValue | mask                
-            self.single_access_write(reg, regValue)            
+            mask = 0x00 | (1<<bit)
+            regValue = regValue | mask
+            self.single_access_write(reg, regValue)
 
         # pullUp enable/disable section
 
@@ -170,13 +170,13 @@ class MCP230XX:
             regValue = self.single_access_read(reg)
 
             if pullUp == 'enable':
-                mask = 0x00 | (1<<bit)           
-                regValue = regValue | mask                
+                mask = 0x00 | (1<<bit)
+                regValue = regValue | mask
                 self.single_access_write(reg, regValue)
             else: # pullUp = disable
-                mask = 0b11111111 & ~(1<<bit)            
-                regValue = regValue & mask                
-                self.single_access_write(reg, regValue)            
+                mask = 0b11111111 & ~(1<<bit)
+                regValue = regValue & mask
+                self.single_access_write(reg, regValue)
 
         return
 
@@ -192,66 +192,66 @@ class MCP230XX:
         regValue = self.single_access_read(reg)
 
         if invert == True:
-            mask = 0x00 | (1<<bit)           
-            regValue = regValue | mask                
+            mask = 0x00 | (1<<bit)
+            regValue = regValue | mask
             self.single_access_write(reg, regValue)
         else: # invert = False
-            mask = 0b11111111 & ~(1<<bit)            
-            regValue = regValue & mask                
-            self.single_access_write(reg, regValue)        
+            mask = 0b11111111 & ~(1<<bit)
+            regValue = regValue & mask
+            self.single_access_write(reg, regValue)
 
         return
 
     def output(self, pin, value):
         """output, function to set the state of a GPIO output
-        pin via the appropriate bit in the OLATA/B registers"""    
+        pin via the appropriate bit in the OLATA/B registers"""
 
         reg, bit = self.register_bit_select(pin ,reg8A=0x0A,reg16A=0X14,
                                             reg8B=0X1A, reg16B=0x15)
-                
+
         regValue = self.single_access_read(reg)
 
         if value == 1:
-            # set output high        
-            mask = 0x00 | (1<<bit)           
-            regValue = regValue | mask        
+            # set output high
+            mask = 0x00 | (1<<bit)
+            regValue = regValue | mask
         else:
             # set output low
-            mask = 0b11111111 & ~(1<<bit)            
+            mask = 0b11111111 & ~(1<<bit)
             regValue = regValue & mask
 
-        self.single_access_write(reg, regValue)              
+        self.single_access_write(reg, regValue)
 
         return
 
     def input(self, pin):
         """input, function to get the current level of a GPIO input
-        pin by reading the appropriate bit in the GPIOA/B registers"""    
+        pin by reading the appropriate bit in the GPIOA/B registers"""
 
         reg, bit = self.register_bit_select(pin ,reg8A=0x09,reg16A=0X12,
                                             reg8B=0X19, reg16B=0x13)
-                
+
         regValue = self.single_access_read(reg)
 
         mask = 0x00 | (1<<bit)
         value = regValue & mask
-        value = value >> bit              
+        value = value >> bit
 
         return value
 
     def input_at_interrupt(self, pin):
         """input_at_interrupt, function to get the current level of a GPIO input
         pin when an interrupt has occurred by reading the appropriate bit in the
-        INTCAPA/B registers"""    
+        INTCAPA/B registers"""
 
         reg, bit = self.register_bit_select(pin ,reg8A=0x08,reg16A=0X10,
                                             reg8B=0X18, reg16B=0x11)
-                
+
         regValue = self.single_access_read(reg)
 
         mask = 0x00 | (1<<bit)
         value = regValue & mask
-        value = value >> bit       
+        value = value >> bit
 
         return value
 
@@ -266,9 +266,9 @@ class MCP230XX:
                                             reg8B=0X12, reg16B=0x05)
 
         regValue = self.single_access_read(reg)
-        mask = 0x00 | (1<<bit)           
+        mask = 0x00 | (1<<bit)
         regValue = regValue | mask
-        self.single_access_write(reg, regValue)        
+        self.single_access_write(reg, regValue)
 
         # set bit in INTCONA/B registers
 
@@ -276,15 +276,15 @@ class MCP230XX:
                                             reg8B=0X14, reg16B=0x09)
 
         regValue = self.single_access_read(reg)
-        mask = 0b11111111 & ~(1<<bit)            
+        mask = 0b11111111 & ~(1<<bit)
         regValue = regValue & mask
-        self.single_access_write(reg, regValue)        
+        self.single_access_write(reg, regValue)
 
-        # set bit in DEFVALA/B registers - not required    
+        # set bit in DEFVALA/B registers - not required
 
         # set call back functions in function list
         self.callBackFuncts[pin][0]=callbackFunctLow
-        self.callBackFuncts[pin][1]=callbackFunctHigh    
+        self.callBackFuncts[pin][1]=callbackFunctHigh
 
         return
 
@@ -298,9 +298,9 @@ class MCP230XX:
                                             reg8B=0X12, reg16B=0x05)
 
         regValue = self.single_access_read(reg)
-        mask = 0b11111111 & ~(1<<bit)            
+        mask = 0b11111111 & ~(1<<bit)
         regValue = regValue & mask
-        self.single_access_write(reg, regValue)        
+        self.single_access_write(reg, regValue)
 
         # reset call back functions in function list to 'empty'
         self.callBackFuncts[pin][0]='empty'
@@ -329,7 +329,7 @@ class MCP230XX:
                 pin = i
                 break
 
-        value = self.input_at_interrupt(pin)        
+        value = self.input_at_interrupt(pin)
 
         if self.callBackFuncts[pin][value] != 'empty':
             self.callBackFuncts[pin][value](pin)
@@ -357,7 +357,7 @@ class MCP230XX:
                 pin = i + 8
                 break
 
-        value = self.input_at_interrupt(pin)        
+        value = self.input_at_interrupt(pin)
 
         if self.callBackFuncts[pin][value] != 'empty':
             self.callBackFuncts[pin][value](pin)
@@ -398,7 +398,7 @@ class MCP230XX:
                     pin = i + 8
                     break
 
-        value = self.input_at_interrupt(pin)        
+        value = self.input_at_interrupt(pin)
 
         if self.callBackFuncts[pin][value] != 'empty':
             self.callBackFuncts[pin][value](pin)
@@ -439,14 +439,14 @@ if __name__ == "__main__":
     import RPi.GPIO as IO
     import time, sys
 
-    address = 0x21
+    address = 0x20
     intPin = 5
 
     # set up GPIO settings
     IO.setwarnings(False)
     IO.setmode(IO.BCM)
     IO.setup(intPin,IO.IN, pull_up_down=IO.PUD_DOWN) # set intPin to input
-        
+
     MCP = MCP230XX('MCP23017', address, '16bit')
 
     for i in range(0,22):
@@ -467,10 +467,10 @@ if __name__ == "__main__":
     MCP.set_mode(0, 'output')
     MCP.output(0, 1)
     time.sleep(3)
-    MCP.output(0, 0)    
+    MCP.output(0, 0)
 
-    # input tests    
-    
+    # input tests
+
     MCP.set_mode(2, 'input', 'enable') # was pin 2
     #MCP.invert_input(2, True)
     for i in range(0,10):
@@ -491,16 +491,6 @@ if __name__ == "__main__":
 
     except:
         IO.cleanup()
-        MCP.remove_interrupt(10)       
-    finally:        
-        MCP.__del__()        
-
-
-
-
-    
-
-
-    
-
-        
+        MCP.remove_interrupt(10)
+    finally:
+        MCP.__del__()
