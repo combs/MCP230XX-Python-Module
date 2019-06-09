@@ -6,6 +6,6 @@ setup(
 	author_email='code@buysdb.nl',
 	description='',
 	url='https://github.com/BuysDB/MCP230XX-Python-Module',
-	py_modules=['mcp230xx'],
+	packages=['mcp230xx'],
 	install_requires=[] #'smbus']
 )
