@@ -7,5 +7,5 @@ setup(
 	description='',
 	url='https://github.com/BuysDB/MCP230XX-Python-Module',
 	packages=['mcp230xx'],
-	install_requires=[] #'smbus']
+	install_requires=['smbus']
 )
