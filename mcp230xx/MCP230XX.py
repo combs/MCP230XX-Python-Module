@@ -31,8 +31,8 @@ class MCP230XX:
 
         self.i2cAddress = i2cAddress
         self.bus = smbus2.SMBus(busnum)
-        self.chip = upper(chip)
-
+        self.chip = chip.upper()
+        
         if self.chip == 'MCP23008':
             self.bank = '8bit'
         else:
