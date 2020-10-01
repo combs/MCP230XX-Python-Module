@@ -22,16 +22,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import time, sys, smbus
+import time, sys, smbus2
 
 
 class MCP230XX:
 
-    def __init__(self, chip, i2cAddress, regScheme = '16bit'):
+    def __init__(self, chip = "MCP23017", i2cAddress = 32, regScheme = '16bit', busnum = 1):
 
         self.i2cAddress = i2cAddress
-        self.bus =smbus.SMBus(1)
-        self.chip = chip
+        self.bus = smbus2.smbus2(busnum)
+        self.chip = upper(chip)
 
         if self.chip == 'MCP23008':
             self.bank = '8bit'
