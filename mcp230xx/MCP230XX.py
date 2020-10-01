@@ -27,10 +27,10 @@ import time, sys, smbus2
 
 class MCP230XX:
 
-    def __init__(self, chip = "MCP23017", i2cAddress = 32, regScheme = '16bit', busnum = 1):
+    def __init__(self, chip = "MCP23017", i2cAddress = 32, regScheme = '16bit', busnum = 1, gpio = None):
 
         self.i2cAddress = i2cAddress
-        self.bus = smbus2.smbus2(busnum)
+        self.bus = smbus2.SMBus(busnum)
         self.chip = upper(chip)
 
         if self.chip == 'MCP23008':
