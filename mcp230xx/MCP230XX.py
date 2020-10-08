@@ -38,9 +38,9 @@ class MCP230XX:
         else:
             self.bank = regScheme
 
-        self.callBackFuncts=[]
+        self.callbacks=[]
         for i in range(0,17):
-            self.callBackFuncts.append(['empty','emtpy'])
+            self.callbacks.append(['empty','empty'])
 
         return
 
@@ -283,8 +283,8 @@ class MCP230XX:
         # set bit in DEFVALA/B registers - not required
 
         # set call back functions in function list
-        self.callBackFuncts[pin][0]=callbackFunctLow
-        self.callBackFuncts[pin][1]=callbackFunctHigh
+        self.callbacks[pin][0]=callbackFunctLow
+        self.callbacks[pin][1]=callbackFunctHigh
 
         return
 
@@ -303,8 +303,8 @@ class MCP230XX:
         self.single_access_write(reg, regValue)
 
         # reset call back functions in function list to 'empty'
-        self.callBackFuncts[pin][0]='empty'
-        self.callBackFuncts[pin][1]='empty'
+        self.callbacks[pin][0]='empty'
+        self.callbacks[pin][1]='empty'
 
         return
 
@@ -331,8 +331,8 @@ class MCP230XX:
 
         value = self.input_at_interrupt(pin)
 
-        if self.callBackFuncts[pin][value] != 'empty':
-            self.callBackFuncts[pin][value](pin)
+        if self.callbacks[pin][value] != 'empty':
+            self.callbacks[pin][value](pin)
 
         return
 
@@ -359,8 +359,8 @@ class MCP230XX:
 
         value = self.input_at_interrupt(pin)
 
-        if self.callBackFuncts[pin][value] != 'empty':
-            self.callBackFuncts[pin][value](pin)
+        if self.callbacks[pin][value] != 'empty':
+            self.callbacks[pin][value](pin)
 
         return
 
@@ -400,8 +400,8 @@ class MCP230XX:
 
         value = self.input_at_interrupt(pin)
 
-        if self.callBackFuncts[pin][value] != 'empty':
-            self.callBackFuncts[pin][value](pin)
+        if self.callbacks[pin][value] != 'empty':
+            self.callbacks[pin][value](pin)
 
         return
 

@@ -1,7 +1,7 @@
 from setuptools import setup
 setup(
 	name='mcp230xx',
-	version='0.02',
+	version='0.03',
 	author='Owain Martin, forked by Buys de Barbanson, forked by Chris Combs',
 	author_email='ccombs@gmail.com',
 	description='',
