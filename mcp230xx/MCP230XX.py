@@ -429,9 +429,6 @@ class MCP230XX:
         back to default settings"""
 
         #print('deleting')
-
-        self.register_reset()
-
         return
 
 if __name__ == "__main__":
