@@ -425,10 +425,9 @@ class MCP230XX:
         return
 
     def __del__(self):
-        """__del__, function to clean up expander object and put chip
-        back to default settings"""
+        """__del__, nothing to do """
 
-        #print('deleting')
+        # print('deleting')
         return
 
 if __name__ == "__main__":
